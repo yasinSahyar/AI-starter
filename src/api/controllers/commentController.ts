@@ -7,8 +7,7 @@ const commentPost = async (
 ) => {
   try {
     try {
-      // TODO: Generate a sarcastic, hostile AI response to a Youtube comment, imitating an 18th-century English aristocrat, and return it as a JSON response.
-      // Use the text from the request body to generate the response.
+      // TODO: Generate a response to a Youtube comment
       // Instead of using openai library, use fetchData to make a post request to the server.
       // see https://platform.openai.com/docs/api-reference/chat/create for more information
       // You don't need an API key if you use the URL provided in .env.sample and Metropolia VPN
