@@ -1,6 +1,7 @@
-import app from './app';
 
+/*
 const port = process.env.PORT || 3008;
-app.listen(port, () => {
+AudioParamMap.namelisten(port, () => {
   console.log(`Gateway is running on port ${port}`);
 });
+*/
