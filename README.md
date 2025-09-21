@@ -4,7 +4,7 @@ This is an Express.js application built with TypeScript that serves as an API ga
 
 ---
 
-**Repository Link:** [Add your repository link here](https://github.com/your-username/your-repo)
+
 
 ---
 
@@ -191,5 +191,3 @@ plaintext
 [PROMPT_SUGGESTION]How can I connect this application to a MySQL database to store the dishes?[/PROMPT_SUGGESTION]
 [PROMPT_SUGGESTION]Show me how to add JWT authentication to protect the dish API endpoints.[/PROMPT_SUGGESTION]
 -->
-
-

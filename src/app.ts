@@ -8,6 +8,7 @@ import cors from 'cors';
 import { createProxyMiddleware, Options } from 'http-proxy-middleware';
 import { ClientRequest, IncomingMessage } from 'http';
 import { errorHandler, notFound } from './middlewares';
+import api from './api';
 
 // Servis yapılandırması için bir arayüz (interface) tanımlayarak kod okunabilirliğini artırıyoruz.
 interface Service {
@@ -19,16 +20,6 @@ interface Service {
 
 // Yönlendirilecek servislerin (API'ların) tanımlanması
 const services: Service[] = [
-  {
-    route: '/api1',
-    target: 'https://jsonplaceholder.typicode.com', // Örnek: JSONPlaceholder API
-    pathRewrite: { '^/api1': '' }, // Gelen istekteki /api1 ön ekini kaldırır.
-  },
-  {
-    route: '/api2',
-    target: 'https://catfact.ninja', // Örnek: Cat Fact API
-    pathRewrite: { '^/api2': '' }, // Gelen istekteki /api2 ön ekini kaldırır.
-  },
   {
     route: '/weather',
     target: 'https://api.openweathermap.org', // Hedef domain
@@ -62,6 +53,7 @@ const app = express();
 app.use(morgan('combined'));
 app.use(helmet());
 app.use(cors());
+app.use(express.json());
 app.disable('x-powered-by');
 
 // Her servis için proxy middleware'i ayarla
@@ -82,6 +74,8 @@ services.forEach(({ route, target, onProxyReq, pathRewrite }) => {
 
   app.use(route, createProxyMiddleware(proxyOptions));
 });
+
+app.use('/api/v1', api);
 
 // Tanımlı olmayan rotalar için 404 hatası üreten middleware.
 app.use(notFound);
