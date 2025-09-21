@@ -1,8 +1,7 @@
 import {Request, Response, NextFunction} from 'express';
 import CustomError from '../../classes/CustomError';
 import fetchData from '../../lib/fetchData';
-// import { ChatCompletion } from 'openai/resources/index';
-import OpenAI from "openai";
+import { ChatCompletion } from 'openai/resources/index';
 
 const commentPost = async (
   req: Request<{}, {}, {text: string}>,
