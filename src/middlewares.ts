@@ -75,8 +75,11 @@ const getAiImage = async (
 
     const response = await openai.images.generate({
       model: 'dall-e-2',
-      prompt: `Name of dish: ${req.body.dish_name}. The description of the dish: ${req.body.description}. Type of the dish: ${req.body.dish_type}.`,
+      // A more descriptive prompt for better image quality
+      prompt: `A high-quality, photorealistic image of a dish called "${req.body.dish_name}". It is a ${req.body.dish_type}. The dish is described as: "${req.body.description}". The image should be well-lit, appetizing, and styled for a gourmet food magazine.`,
       size: '1024x1024',
+      quality: 'hd', // Request a higher quality image
+      n: 1,
     });
     if (
       !response.data ||
@@ -99,34 +102,40 @@ const saveAiImage = async (
   res: Response<{}, {filename: string; url: string}>,
   next: NextFunction,
 ) => {
-  const imageName = req.body.dish_name.replace(/[^a-zA-Z0-9]/g, '_') + '.png';
-  
-  if (!res.locals.url) {
+  try {
+    if (!res.locals.url) {
+      res.locals.filename = 'default.png';
+      return next();
+    }
+
+    const imageName =
+      req.body.dish_name.replace(/[^a-zA-Z0-9]/g, '_') + '.png';
+    const imagePath = './uploads/' + imageName;
+
+    await new Promise<void>((resolve, reject) => {
+      const file = fs.createWriteStream(imagePath);
+      https.get(res.locals.url, (response) => {
+        response.pipe(file);
+        file.on('finish', () => {
+          // file.close() is async, wait for it to finish
+          file.close(() => {
+            console.log(`Image downloaded from ${res.locals.url}`);
+            res.locals.filename = imageName;
+            resolve();
+          });
+        });
+      }).on('error', (err) => {
+        // Try to delete the partial file on error
+        fs.unlink(imagePath, () => reject(err));
+      });
+    });
+
+    next();
+  } catch (error) {
+    console.error('Failed to save AI image:', error);
     res.locals.filename = 'default.png';
     next();
-    return;
   }
-
-  const file = fs.createWriteStream('./uploads/' + imageName);
-
-  https
-    .get(res.locals.url, (response) => {
-      response.pipe(file);
-
-      file.on('finish', () => {
-        file.close();
-        console.log(`Image downloaded from ${res.locals.url}`);
-      });
-    })
-    .on('error', (err) => {
-      fs.unlink('./uploads/' + imageName, () => {
-        console.error(`Error downloading image: ${err.message}`);
-      });
-      res.locals.filename = 'default.png';
-    });
-  
-  res.locals.filename = imageName;
-  next();
 };
 
 const validate = (req: Request, _res: Response, next: NextFunction) => {

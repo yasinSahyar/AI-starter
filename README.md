@@ -1,25 +1,28 @@
 # AI-commenter-starter
 
-**Repository Link:** [Link to your repository here](https://github.com/your-username/your-repo)
+This is an Express.js application built with TypeScript that serves as an API gateway and includes features for managing a dish database with automatic AI-powered image generation.
 
 ---
 
-For this assignment (Week 4 AI tasks), I implemented a feature that uses OpenAI's DALL-E 2 to automatically generate an image for a new dish based on its details. I also configured the application to use the custom API endpoint provided for the assignment.
+**Repository Link:** [Add your repository link here](https://github.com/your-username/your-repo)
 
-## AI Task Details (Tehtävä 1 & 2)
+---
+
+## 📝 Week 4 - AI Tasks
+
+For this assignment, I implemented a feature to automatically generate images for dishes using the DALL-E 2 model via the OpenAI API. The application is configured to use the custom endpoint `https://media2.edu.metropolia.fi/openapi`.
 
 ### Prompt Generation
 
-To generate the images, I constructed a dynamic prompt for the DALL-E 2 API. This prompt is built using the `dish_name`, `description`, and `dish_type` that the user provides when creating a new dish.
+The prompt sent to the DALL-E 2 API is dynamically constructed from the dish details provided by the user. I engineered the prompt to request a high-quality, photorealistic image suitable for a gourmet food magazine to achieve the best visual results.
 
-Here is the code from `src/middlewares.ts` that I used to build the prompt and call the API:
-
-**Code from `src/middlewares.ts`:**
+**Prompt Logic from `src/middlewares.ts`:**
 ```typescript
 const response = await openai.images.generate({
   model: 'dall-e-2',
-  prompt: `Name of dish: ${req.body.dish_name}. The description of the dish: ${req.body.description}. Type of the dish: ${req.body.dish_type}.`,
+  prompt: `A high-quality, photorealistic image of a dish called "${req.body.dish_name}". It is a ${req.body.dish_type}. The dish is described as: "${req.body.description}". The image should be well-lit, appetizing, and styled for a gourmet food magazine.`,
   size: '1024x1024',
+  quality: 'hd',
 });
 ```
 
